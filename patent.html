@@ -16,6 +16,11 @@
   .res li{padding:8px 0;border-bottom:1px solid rgba(128,128,128,.25);cursor:default}
   .res li.click{cursor:pointer}
   .res small{color:var(--mut)}
+  .dates{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .calcres{margin:12px 0;font-size:18px}
+  .calcres b{font-size:26px}
+  #c_act{height:auto}
+  button.primary{padding:12px 18px;font-size:16px;cursor:pointer;border-radius:8px;border:0;background:var(--ac);color:var(--ac-ink);font-weight:600;margin:8px 0}
   .warn{padding:10px;border-left:3px solid var(--ac);margin:12px 0}
 </style>
 </head>
@@ -30,6 +35,7 @@
     <div class="modes">
       <button type="button" id="m1">Ищу деятельность - в каких регионах</button>
       <button type="button" id="m2" class="off">Знаю регион - что можно</button>
+      <button type="button" id="m3" class="off">Рассчитать стоимость</button>
     </div>
     <div id="p1">
       <input class="fld" id="q1" placeholder="Например: юрид, парикмахер, такси, ремонт обуви" autocomplete="off">
@@ -43,7 +49,24 @@
       <div id="st2" class="hint"></div>
       <ul class="res" id="r2"></ul>
     </div>
-    <div class="warn hint">Здесь показано только наличие вида деятельности в перечне региона на 2026 год. Сумму патента считает официальный калькулятор: <a href="https://patent.nalog.ru/info/" target="_blank" rel="noopener">patent.nalog.ru/info</a> - сумма зависит от периода и физического показателя, поэтому здесь не приводится.</div>
+    <div id="p3" style="display:none">
+      <select class="fld" id="c_reg" aria-label="Регион"><option>Загружаю регионы...</option></select>
+      <select class="fld" id="c_mun" aria-label="Муниципальное образование" style="display:none"></select>
+      <input class="fld" id="c_actq" placeholder="Найти вид деятельности (например: парикмахер, ремонт, такси)" autocomplete="off">
+      <select class="fld" id="c_act" aria-label="Вид деятельности" size="6"></select>
+      <div id="c_signbox" style="display:none">
+        <label id="c_signlbl" class="hint"></label>
+        <input class="fld" id="c_val" inputmode="decimal" autocomplete="off">
+      </div>
+      <div class="dates">
+        <label class="hint">Начало действия патента<input class="fld" type="date" id="c_d1" value="2026-01-01" min="2026-01-01" max="2026-12-31"></label>
+        <label class="hint">Окончание<input class="fld" type="date" id="c_d2" value="2026-12-31" min="2026-01-01" max="2026-12-31"></label>
+      </div>
+      <button type="button" id="c_go" class="primary">Рассчитать</button>
+      <div id="c_out" class="calcres" aria-live="polite"></div>
+      <p class="hint">Расчёт делает официальный калькулятор ФНС (patent.nalog.ru) в момент запроса, мы только показываем его ответ. Он ориентировочный: для оформления патента ориентируйтесь на решение налоговой.</p>
+    </div>
+    <div class="warn hint">Здесь показано только наличие вида деятельности в перечне региона на 2026 год. Стоимость патента можно узнать на вкладке «Рассчитать стоимость»: расчёт делает официальный калькулятор <a href="https://patent.nalog.ru/info/" target="_blank" rel="noopener">patent.nalog.ru/info</a>.</div>
     <p class="hint" id="src"></p>
   </div>
   <div class="card note-card">
@@ -67,8 +90,66 @@ get("data/psn/index.json").then(function(d){
   $("reg").innerHTML=d.regions.map(function(r){return '<option value="'+r.code+'">'+esc(r.code+" "+r.name)+"</option>"}).join("");
   $("reg").onchange();
 }).catch(function(){$("st1").textContent="Не удалось загрузить данные."});
-function setMode(m){$("p1").style.display=m==1?"":"none";$("p2").style.display=m==2?"":"none";$("m1").className=m==1?"":"off";$("m2").className=m==2?"":"off"}
-$("m1").onclick=function(){setMode(1)};$("m2").onclick=function(){setMode(2)};
+function setMode(m){$("p1").style.display=m==1?"":"none";$("p2").style.display=m==2?"":"none";$("p3").style.display=m==3?"":"none";$("m1").className=m==1?"":"off";$("m2").className=m==2?"":"off";$("m3").className=m==3?"":"off";if(m==3)initCalc()}
+$("m1").onclick=function(){setMode(1)};$("m2").onclick=function(){setMode(2)};$("m3").onclick=function(){setMode(3)};
+
+var W="https://psn-proxy.valeraslim86.workers.dev";
+var calcInit=false,cActs=[],cMuni=null,cMo="0",cSign=null;
+function wget(path){return fetch(W+path).then(function(r){return r.json().then(function(j){if(!r.ok)throw j;return j})})}
+function opts(list,skip){return list.filter(function(x){return x.Value!=="0"}).map(function(x){return '<option value="'+esc(x.Value)+'">'+esc(x.Text.replace(/\s+/g," ").trim())+"</option>"}).join("")}
+function initCalc(){
+  if(calcInit)return;calcInit=true;
+  wget("/lists?t=ufns").then(function(l){
+    $("c_reg").innerHTML='<option value="">Выберите регион</option>'+opts(l);
+  }).catch(function(){calcInit=false;$("c_out").textContent="Сервис расчёта сейчас недоступен. Попробуйте позже или воспользуйтесь patent.nalog.ru/info."});
+  $("c_reg").onchange=onReg;$("c_mun").onchange=function(){loadActs(muniId($("c_mun").value))};
+  $("c_act").onchange=onAct;$("c_actq").oninput=renderActs;$("c_go").onclick=doCalc;
+}
+function muniId(v){var p=v.split("S");return(p[1]&&parseInt(p[1],10)>0)?p[1]:p[0]}
+function reset(){$("c_out").textContent="";$("c_signbox").style.display="none";cSign=null}
+function onReg(){
+  reset();var v=$("c_reg").value;cActs=[];$("c_act").innerHTML="";$("c_mun").style.display="none";if(!v)return;
+  if(v.charAt(0)==="L"){cMo="0";loadActs(v.slice(1));return}
+  wget("/lists?t=mun&val="+encodeURIComponent(v)).then(function(l){
+    var m=$("c_mun");m.innerHTML='<option value="">Выберите муниципальное образование</option>'+opts(l);m.style.display="";
+  }).catch(function(){$("c_out").textContent="Не удалось получить список муниципальных образований."});
+}
+function loadActs(id){
+  reset();if(!id)return;cMuni=id;cMo=($("c_reg").value.charAt(0)==="L")?"0":$("c_mun").value;
+  wget("/lists?t=obj&val="+id).then(function(l){
+    cActs=l.filter(function(x){return x.Value!=="0"}).map(function(x){return{v:x.Value,t:x.Text.replace(/\s+/g," ").trim()}});renderActs();
+  }).catch(function(){$("c_out").textContent="Не удалось получить список видов деятельности."});
+}
+function renderActs(){
+  var ok=mk($("c_actq").value.trim()),hasq=$("c_actq").value.trim().length>0;
+  var rows=cActs.filter(function(a){return !hasq||ok(a.t)});
+  $("c_act").innerHTML=rows.slice(0,300).map(function(a){return '<option value="'+a.v+'">'+esc(a.t)+"</option>"}).join("");
+}
+function onAct(){
+  reset();var a=$("c_act").value;if(!a)return;
+  wget("/lists?t=sign&fns="+cMuni+"&val="+a).then(function(j){
+    var s=j&&j[0];cSign=s||null;if(!s||s.Sign_Type==="so_none")return;
+    $("c_signlbl").textContent=s.Text+(parseFloat(s.Max_Units)>0?" (не более "+s.Max_Units+")":"");
+    $("c_val").value="";$("c_signbox").style.display="";
+  }).catch(function(){$("c_out").textContent="Не удалось получить физический показатель."});
+}
+function fmt(d){var p=d.split("-");return p[2]+"."+p[1]+"."+p[0]}
+function doCalc(){
+  var out=$("c_out");
+  if(!$("c_reg").value||!cMuni||!$("c_act").value||!cSign){out.textContent="Выберите регион, муниципальное образование и вид деятельности.";return}
+  var d1=$("c_d1").value,d2=$("c_d2").value;
+  if(!d1||!d2||d2<d1){out.textContent="Проверьте даты: окончание не может быть раньше начала.";return}
+  if(d1.slice(0,4)!==d2.slice(0,4)){out.textContent="Период должен быть в пределах одного календарного года.";return}
+  var val=$("c_val").value.trim();
+  if(cSign.Sign_Type!=="so_none"&&!val){out.textContent="Укажите значение показателя.";return}
+  out.textContent="Считаю...";
+  var q="/calc?ufns="+encodeURIComponent($("c_reg").value)+"&mo="+encodeURIComponent(cMo)+"&act="+$("c_act").value+"&sign="+cSign.Value+"&d1="+fmt(d1)+"&d2="+fmt(d2)+"&value="+encodeURIComponent(val);
+  wget(q).then(function(r){
+    var t='Стоимость патента: <b>'+r.tax.toLocaleString("ru-RU")+" руб.</b>";
+    if(r.payments&&r.payments.length==2)t+='<br><small>Оплата двумя платежами: '+r.payments[0].toLocaleString("ru-RU")+" руб. в течение 90 дней после начала действия патента и "+r.payments[1].toLocaleString("ru-RU")+" руб. до окончания его срока.</small>";
+    out.innerHTML=t;
+  }).catch(function(e){out.textContent=(e&&e.error&&e.error!=="upstream")?("Калькулятор ФНС не принял данные: "+e.error):"Сервис расчёта сейчас недоступен. Попробуйте позже или воспользуйтесь patent.nalog.ru/info."});
+}
 var loading=null;
 function loadAll(){
   if(all)return Promise.resolve(all);
