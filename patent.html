@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Патент для ИП: где разрешена ваша деятельность - поиск по регионам 2026</title>
+<meta name="description" content="Найдите свой вид деятельности в перечне патентной системы (ПСН) 2026 года и узнайте, в каких регионах России на него можно взять патент. Поиск по части слова, все 89 регионов.">
+<link rel="canonical" href="https://kalkulyator-nalogov.github.io/patent.html">
+<link rel="stylesheet" href="style.css">
+<style>
+  .modes{display:flex;gap:8px;margin:14px 0}
+  .modes button{flex:1}
+  .modes button.off{opacity:.55}
+  input.q,select.q{width:100%;padding:10px;font-size:16px;margin:6px 0;box-sizing:border-box}
+  .res{list-style:none;padding:0;margin:8px 0}
+  .res li{padding:8px 0;border-bottom:1px solid rgba(128,128,128,.25);cursor:default}
+  .res li.click{cursor:pointer}
+  .res small{color:var(--mut)}
+  .warn{padding:10px;border-left:3px solid var(--ac);margin:12px 0}
+</style>
+</head>
+<body>
+<div class="hero"><div class="container">
+  <span class="badge">Перечень видов деятельности ПСН, 2026 год</span>
+  <h1>Подходит ли ваша деятельность под патент</h1>
+  <p class="lead">Официальный поиск ФНС требует сначала выбрать регион, а потом искать вид деятельности по началу слова. Здесь можно искать по любой части слова и сразу видеть, в каких регионах эта деятельность есть в перечне.</p>
+</div></div>
+<div class="container">
+  <div class="card">
+    <div class="modes">
+      <button type="button" id="m1">Ищу деятельность - в каких регионах</button>
+      <button type="button" id="m2" class="off">Знаю регион - что можно</button>
+    </div>
+    <div id="p1">
+      <input class="q" id="q1" placeholder="Например: юрид, парикмахер, такси, ремонт обуви" autocomplete="off">
+      <div id="st1" class="hint"></div>
+      <ul class="res" id="r1"></ul>
+    </div>
+    <div id="p2" style="display:none">
+      <select class="q" id="reg"></select>
+      <select class="q" id="mun" style="display:none"></select>
+      <input class="q" id="q2" placeholder="Фильтр по названию деятельности" autocomplete="off">
+      <div id="st2" class="hint"></div>
+      <ul class="res" id="r2"></ul>
+    </div>
+    <div class="warn hint">Здесь показано только наличие вида деятельности в перечне региона на 2026 год. Сумму патента считает официальный калькулятор: <a href="https://patent.nalog.ru/info/" target="_blank" rel="noopener">patent.nalog.ru/info</a> - сумма зависит от периода и физического показателя, поэтому здесь не приводится.</div>
+    <p class="hint" id="src"></p>
+  </div>
+  <div class="card note-card">
+    <h3>Другие калькуляторы</h3>
+    <ul class="hint">
+      <li><a href="index.html?from=patent">Какой налоговый режим выгоднее ИП и самозанятым</a></li>
+      <li><a href="https://kalkulyator-mastera.github.io/?from=kalkulyator-nalogov-patent" target="_blank" rel="noopener">Себестоимость бьюти услуг</a></li>
+      <li><a href="https://kalkulyator-soc-kontrakta.github.io/?from=kalkulyator-nalogov-patent" target="_blank" rel="noopener">Калькулятор соцконтракта</a></li>
+    </ul>
+  </div>
+</div>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var idx=null,cache={},all=null;
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function get(u){return fetch(u).then(function(r){if(!r.ok)throw 0;return r.json()})}
+function region(c){return cache[c]?Promise.resolve(cache[c]):get("data/psn/"+c+".json").then(function(d){return cache[c]=d})}
+get("data/psn/index.json").then(function(d){
+  idx=d;$("src").textContent="Источник: "+d.source+". Регионов: "+d.regions.length+".";
+  $("reg").innerHTML=d.regions.map(function(r){return '<option value="'+r.code+'">'+esc(r.code+" "+r.name)+"</option>"}).join("");
+  $("reg").onchange();
+}).catch(function(){$("st1").textContent="Не удалось загрузить данные."});
+function setMode(m){$("p1").style.display=m==1?"":"none";$("p2").style.display=m==2?"":"none";$("m1").className=m==1?"":"off";$("m2").className=m==2?"":"off"}
+$("m1").onclick=function(){setMode(1)};$("m2").onclick=function(){setMode(2)};
+var loading=null;
+function loadAll(){
+  if(all)return Promise.resolve(all);
+  if(loading)return loading;
+  $("st1").textContent="Загружаю данные по всем регионам...";
+  loading=Promise.all(idx.regions.map(function(r){return region(r.code)})).then(function(a){all=a;$("st1").textContent="";return a});
+  return loading;
+}
+function fold(s){return s.toLowerCase().replace(/ё/g,"е")}
+var END=/(ическими|ических|ическое|ического|ическая|ические|ениями|ования|ований|овани[еяю]|ениях|ения|ение|ами|ями|ого|ему|ому|ыми|ими|ых|их|ой|ый|ий|ая|ое|ые|ие|ов|ев|ей|ам|ям|ах|ях|ом|ем|ы|и|а|я|у|ю|е|о|ь)$/;
+function stem(w){var r=w.replace(END,"");return r.length>=4?r:w}
+var SYN={"грузоперевозк":["перевозке груз"],"такс":["такси"],"грузчик":["погрузк","груз"],"одежд":["одежд","швейн","пошив"],"пошив":["пошив","швейн"],"маникюр":["маникюр","косметическ","парикмахерск"],"стрижк":["парикмахерск"],"репетитор":["репетиторств","обучен"],"строительств":["строительн"],"ремонт":["ремонт"]};
+function toks(q){return fold(q).split(/[^а-яa-z0-9]+/).filter(function(w){return w.length>=3}).map(function(w){var s=stem(w);return SYN[s]?SYN[s]:[s]})}
+function mk(q){var t=toks(q);return function(text){var f=fold(text).replace(/\(за исключением[^)]*\)/g,"");for(var i=0;i<t.length;i++){var hit=false;for(var j=0;j<t[i].length;j++)if(f.indexOf(t[i][j])>=0){hit=true;break}if(!hit)return false}return t.length>0}}
+var t1;$("q1").oninput=function(){clearTimeout(t1);t1=setTimeout(run1,200)};
+var sel1=null;
+function run1(){
+  var q=$("q1").value.trim();sel1=null;var ok=mk(q);
+  if(!toks(q).length){$("r1").innerHTML="";$("st1").textContent=q?"Введите хотя бы 3 буквы.":"";return}
+  if(!idx)return;
+  loadAll().then(function(a){
+    var m={};
+    a.forEach(function(r){r.acts.forEach(function(x){if(ok(x[0])){(m[x[0]]=m[x[0]]||[]).push(r)}})});
+    var keys=Object.keys(m).sort(function(x,y){return m[y].length-m[x].length}).slice(0,60);
+    if(!keys.length){$("r1").innerHTML="";$("st1").innerHTML="В перечнях ПСН всех регионов на 2026 год нет вида деятельности с такими словами. Значит, такую деятельность на патенте вести нельзя (например, юридические услуги в перечень не входят) - или она называется иначе, попробуйте синоним.";return}
+    $("st1").textContent="Найдено формулировок: "+keys.length+(keys.length==60?" (показаны первые 60)":"")+". Нажмите на формулировку, чтобы увидеть регионы.";
+    $("r1").innerHTML=keys.map(function(k,i){return '<li class="click" data-k="'+i+'">'+esc(k)+'<br><small>регионов: '+m[k].length+' из '+a.length+'</small></li>'}).join("");
+    Array.prototype.forEach.call($("r1").children,function(li){li.onclick=function(){
+      var k=keys[li.getAttribute("data-k")];
+      li.innerHTML=esc(k)+'<br><small>'+m[k].map(function(r){return esc(r.code+" "+r.name)}).join("; ")+'</small>';li.onclick=null}});
+  });
+}
+$("reg").onchange=function(){
+  region($("reg").value).then(function(d){
+    var s=$("mun");
+    if(d.munis.length>1){s.style.display="";s.innerHTML='<option value="-1">Все муниципальные образования (пересечение не показывается)</option>'+d.munis.map(function(n,i){return '<option value="'+i+'">'+esc(n)+"</option>"}).join("")}
+    else s.style.display="none";
+    run2();
+  });
+};
+$("mun").onchange=run2;
+$("q2").oninput=run2;
+function run2(){
+  var c=$("reg").value;if(!c)return;
+  region(c).then(function(d){
+    var ok2=mk($("q2").value.trim()),hasq=$("q2").value.trim().length>0,mi=$("mun").style.display==="none"?-1:parseInt($("mun").value,10);
+    var rows=d.acts.filter(function(x){
+      if(mi>=0&&x[1]!==0&&x[1].indexOf(mi)<0)return false;
+      return !hasq||ok2(x[0])});
+    $("st2").textContent="Видов деятельности: "+rows.length+" из "+d.acts.length+(mi>=0?" (для выбранного муниципального образования)":"");
+    $("r2").innerHTML=rows.slice(0,200).map(function(x){
+      var only=(x[1]===0)?"":'<br><small>только в части муниципальных образований: '+x[1].length+' из '+d.munis.length+'</small>';
+      return "<li>"+esc(x[0])+only+"</li>"}).join("")+(rows.length>200?"<li><small>Показаны первые 200, уточните фильтр.</small></li>":"");
+  });
+}
+})();
+</script>
+</body>
+</html>
