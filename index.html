@@ -84,7 +84,7 @@
       </div>
 
       <div class="check"><input id="resale" name="resale" type="checkbox"> <label for="resale" style="margin:0">Деятельность - перепродажа чужих товаров</label></div>
-      <div class="check"><input id="excludedActivity" name="excludedActivity" type="checkbox"> <label for="excludedActivity" style="margin:0">Розничная торговля или грузоперевозки (влияет на патент и НПД)</label></div>
+      <div class="check"><input id="excludedActivity" name="excludedActivity" type="checkbox"> <label for="excludedActivity" style="margin:0">Охранные услуги (исключены из патента с 2026) или добыча полезных ископаемых/подакцизные товары/агентская схема без спецусловий (исключены из НПД)</label></div>
 
       <details style="margin-top:14px">
         <summary style="cursor:pointer;color:var(--ac);font-size:14px">Ставки УСН в моём регионе снижены (нажмите, если знаете точные цифры)</summary>
@@ -106,6 +106,19 @@
       <h3>Как это посчитано</h3>
       <p>Методика, ставки, лимиты и источники (с датой проверки) - в файле <a href="METHODOLOGY.md">METHODOLOGY.md</a> репозитория. Калькулятор даёт ориентир, а не готовое решение: перед регистрацией сверьтесь с действующим законодательством вашего региона или проконсультируйтесь с бухгалтером/юристом.</p>
     </div>
+
+    <div class="card note-card">
+      <h3>Официальные источники</h3>
+      <ul class="hint">
+        <li><a href="https://www.nalog.gov.ru/rn77/service/mp/" target="_blank" rel="noopener">Калькулятор выбора режима налогообложения ФНС</a> - официальный подбор системы налогообложения по вашим параметрам.</li>
+        <li><a href="https://npd.nalog.ru/" target="_blank" rel="noopener">npd.nalog.ru</a> - официальная страница ФНС про налог на профессиональный доход (самозанятость): условия и регистрация.</li>
+        <li><a href="https://service.nalog.ru/gosreg/" target="_blank" rel="noopener">service.nalog.ru/gosreg</a> - онлайн-регистрация ИП и ООО в ФНС без визита в инспекцию и без госпошлины.</li>
+        <li><a href="https://www.gosuslugi.ru/" target="_blank" rel="noopener">Госуслуги (gosuslugi.ru)</a> - на главной странице ищите раздел «Бизнес, предпринимательство, НКО» → «Регистрация ИП» или «Стать самозанятым».</li>
+        <li><a href="https://rmsp.nalog.ru/" target="_blank" rel="noopener">Реестр субъектов МСП ФНС</a> - проверить, включена ли компания/ИП в реестр малого и среднего бизнеса (от этого зависят льготные региональные ставки УСН).</li>
+        <li><a href="https://sfr.gov.ru/" target="_blank" rel="noopener">СФР (sfr.gov.ru)</a> - раздел «Страхователям → ИП и самозанятым»: страховые взносы, тарифы и пенсионные права.</li>
+      </ul>
+      <p class="hint tiny">Цифры на этой странице - ориентир, а не готовое решение: для точного расчёта своей ситуации сверьтесь с официальными источниками выше или проконсультируйтесь с бухгалтером/юристом.</p>
+    </div>
   </div>
 
   <div>
@@ -121,6 +134,14 @@
           <button type="button">Посмотреть варианты расчётного счёта →</button>
         </a>
       </div>
+    </div>
+
+    <div class="card note-card">
+      <h3>Похожие калькуляторы</h3>
+      <ul class="hint">
+        <li><a href="https://kalkulyator-mastera.github.io/?from=kalkulyator-nalogov" target="_blank" rel="noopener">Себестоимость бьюти услуг</a> - расчёт рентабельности для мастеров маникюра/бьюти-услуг.</li>
+        <li><a href="https://kalkulyator-soc-kontrakta.github.io/?from=kalkulyator-nalogov" target="_blank" rel="noopener">Калькулятор соцконтракта</a> - расчёт и бизнес-план для соцконтракта 350 000 ₽.</li>
+      </ul>
     </div>
   </div>
 </div>

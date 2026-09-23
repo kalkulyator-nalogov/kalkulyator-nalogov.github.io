@@ -18,7 +18,7 @@ const CONST = {
   psn: {
     incomeLimit: 20000000,    // лимит дохода по патенту, 2026 (снижен с 60 млн)
     staffLimit: 15,
-    excludedTypes: ['Розничная торговля', 'Грузоперевозки'] // отменены для ПСН с 2026
+    excludedTypes: ['Охранные услуги'] // единственное реально исключённое направление с 2026; розница и грузоперевозки СОХРАНЕНЫ (поправка не прошла второе чтение)
   },
   osn: {
     ndflLow: { upTo: 5000000, rate: 0.13 },
@@ -69,7 +69,10 @@ function calcUsnIncome(input, rateOverride) {
   const vat = eligible ? vatEstimate(income) : null;
   return {
     key: 'usn_income', title: `УСН «доходы» (${Math.round(rate * 100)}%)`, eligible, reasons,
-    tax: eligible ? tax + insurance : null, insurance, deduction, vat,
+    // "tax" - это итоговая заголовочная нагрузка (налог+взносы+НДС), чтобы её можно было
+    // честно сравнивать с ОСН (там НДС всегда включён в totalTax) - иначе сортировка "лучшего
+    // режима" занижает УСН при доходе выше порога НДС.
+    tax: eligible ? tax + insurance + (vat ? vat.amount : 0) : null, insurance, deduction, vat,
     net: eligible ? income - tax - insurance - (vat ? vat.amount : 0) : null,
     note: `Налог ${fmt(eligible ? tax : 0)} после вычета взносов (${fmt(insurance)}), уменьшение налога ${hasStaff ? 'до 50%' : 'до 100%'} на сумму взносов. Регион может снижать ставку до 1% отдельным законом - уточните для своего региона на nalog.gov.ru.`
   };
@@ -82,15 +85,16 @@ function calcUsnDr(input, rateOverride) {
   if (status === 'fiz') reasons.push('доступно только ИП или ООО');
   if (income > CONST.usn.incomeLimit) { eligible = false; reasons.push(`доход выше лимита права на УСН ${fmt(CONST.usn.incomeLimit)}`); }
   const rate = rateOverride || 0.15;
-  const base = Math.max(0, income - expenses);
   const insurance = status === 'ip' ? insuranceFor(income, hasStaff) : 0;
+  const base = Math.max(0, income - expenses - insurance); // взносы ИП - расход (ст. 346.16 НК РФ), уменьшают базу
   let tax = eligible ? base * rate : null;
   const minTax = eligible ? income * CONST.usn.minTaxRate : null;
   if (eligible && tax < minTax) tax = minTax;
   const vat = eligible ? vatEstimate(income) : null;
   return {
     key: 'usn_dr', title: `УСН «доходы минус расходы» (${Math.round(rate * 100)}%)`, eligible, reasons,
-    tax: eligible ? tax + insurance : null, insurance, vat,
+    // см. комментарий в calcUsnIncome - НДС включаем в заголовочный "tax", иначе сравнение с ОСН нечестное
+    tax: eligible ? tax + insurance + (vat ? vat.amount : 0) : null, insurance, vat,
     net: eligible ? income - tax - insurance - (vat ? vat.amount : 0) : null,
     note: `Взносы ИП уменьшают базу как расход, а не сам налог. Минимальный налог - 1% от дохода, если рассчитанный налог меньше. Регион может снижать ставку до 5% отдельным законом - уточните для своего региона.`
   };
@@ -112,7 +116,7 @@ function calcPsn(input) {
   const reasons = [];
   let eligible = status === 'ip';
   if (status !== 'ip') reasons.push('патент доступен только индивидуальным предпринимателям');
-  if (excludedActivity) { eligible = false; reasons.push('розничная торговля и грузоперевозки на патенте отменены с 2026 года'); }
+  if (excludedActivity) { eligible = false; reasons.push('охранные услуги исключены из патента с 2026 года (розница и грузоперевозки на патенте сохранены)'); }
   if (income > CONST.psn.incomeLimit) { eligible = false; reasons.push(`доход выше лимита ПСН ${fmt(CONST.psn.incomeLimit)} в год (порог снижен в 2026 году)`); }
   if (hasStaff && staffCount > CONST.psn.staffLimit) { eligible = false; reasons.push(`число сотрудников выше лимита ${CONST.psn.staffLimit} человек`); }
   return {
@@ -124,8 +128,8 @@ function calcPsn(input) {
 
 function calcOsn(input) {
   const { income, expenses, status } = input;
-  const base = Math.max(0, income - expenses);
   const insurance = status === 'ip' ? insuranceFor(income, false) : 0;
+  const base = Math.max(0, income - expenses - insurance); // взносы ИП - профвычет по НДФЛ (ст. 221 НК РФ)
   const vat = income * CONST.osn.vat; // упрощённо, без вычета входящего НДС
   let profitTax;
   if (status === 'ip') {
