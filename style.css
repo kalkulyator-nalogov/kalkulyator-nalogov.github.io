@@ -1,0 +1,155 @@
+/* Дизайн-система страницы. Все цвета - переменные: тёмная тема поддержана. */
+:root{
+  --bg:#f5f7fb;--surface:#fff;--surface-2:#eef2f9;--tx:#16202e;--mut:#63728a;--line:#e0e7f1;
+  --ac:#1f5fd0;--ac-2:#5b93ef;--ac-ink:#fff;--ok:#12805c;--ok-bg:#e8f6f0;--bad:#c0392b;--bad-bg:#fdeceb;
+  --warn:#9a6700;--warn-bg:#fff6e0;
+  --r:16px;--r-sm:10px;--sh:0 1px 2px rgba(20,40,80,.05),0 8px 28px rgba(20,40,80,.07);
+  --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#0f141c;--surface:#171e28;--surface-2:#1f2836;--tx:#e9eef6;--mut:#9aa8bd;--line:#2a3543;
+  --ac:#6ba1ff;--ac-2:#2f5ea8;--ac-ink:#0b1017;--ok:#4fc79b;--ok-bg:#12291f;--bad:#f08a7f;--bad-bg:#2b1715;
+  --warn:#e2b45a;--warn-bg:#2a2313;--sh:0 1px 2px rgba(0,0,0,.4),0 8px 28px rgba(0,0,0,.35)}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 var(--font);-webkit-font-smoothing:antialiased}
+.container{max-width:1160px;margin:0 auto;padding:0 18px}
+a{color:var(--ac)}
+
+.hero{background:radial-gradient(1200px 420px at 85% -20%,color-mix(in srgb,var(--ac-2) 40%,transparent),transparent),radial-gradient(800px 320px at 0% 0%,color-mix(in srgb,var(--ac) 16%,transparent),transparent);padding:46px 0 28px}
+.badge{display:inline-flex;gap:8px;align-items:center;font-size:13px;color:var(--ac);background:color-mix(in srgb,var(--ac) 12%,transparent);border:1px solid color-mix(in srgb,var(--ac) 28%,transparent);padding:5px 12px;border-radius:999px;font-weight:600}
+h1{font-size:clamp(28px,5vw,44px);line-height:1.1;margin:14px 0 10px;letter-spacing:-.02em}
+.lead{color:var(--mut);font-size:clamp(16px,2.2vw,19px);max-width:760px;margin:0}
+.steps{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.step{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 14px 8px 8px;font-size:14px;box-shadow:var(--sh)}
+.step b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--ac);color:var(--ac-ink);font-size:13px}
+
+.layout{display:grid;grid-template-columns:1.25fr .75fr;gap:20px;align-items:start;padding:14px 18px 40px}
+@media(max-width:940px){.layout{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:18px;box-shadow:var(--sh)}
+.card h2{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
+.card h3{font-size:16px;margin:0 0 8px}
+.hint{color:var(--mut);font-size:13.5px;margin:0 0 14px}
+
+label{display:block;font-size:13px;color:var(--mut);margin:12px 0 5px;font-weight:500}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface-2);color:var(--tx);font:inherit}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 18%,transparent)}
+textarea{resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+@media(max-width:620px){.grid2{grid-template-columns:1fr}}
+.grid2 .wide{grid-column:1/-1}
+
+/* Регион */
+.region-box{margin-top:16px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:14px}
+.region-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:620px){.region-grid{grid-template-columns:repeat(2,1fr)}}
+.region-grid div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px}
+.region-grid span{display:block;font-size:12px;color:var(--mut)}
+.region-grid b{font-size:17px}
+.npa{font-size:13px;margin:12px 0 4px}
+.src{font-size:12px;color:var(--mut);margin:0}
+.link-btn{background:none;border:none;color:var(--ac);cursor:pointer;font:inherit;text-decoration:underline;padding:0 0 0 8px}
+
+/* Ниши */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.chip{background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;color:var(--tx);cursor:pointer}
+.chip:hover{border-color:var(--ac)}
+.chip.on{background:var(--ac);color:var(--ac-ink);border-color:var(--ac)}
+
+/* Смета */
+.est-head,.est-row{display:grid;grid-template-columns:1fr 200px 130px 34px;gap:8px;align-items:center}
+.est-head{font-size:12px;color:var(--mut);padding:0 0 6px}
+.est-row{margin-bottom:8px}
+@media(max-width:700px){.est-head{display:none}.est-row{grid-template-columns:1fr 1fr;grid-auto-rows:auto}.est-row .e-name{grid-column:1/-1}}
+.del{background:none;border:1px solid var(--line);border-radius:8px;color:var(--mut);cursor:pointer;height:38px;font-size:18px;line-height:1}
+.del:hover{color:var(--bad);border-color:var(--bad)}
+.add{margin-top:6px;background:none;border:1px dashed var(--line);border-radius:var(--r-sm);color:var(--ac);padding:9px 14px;font:inherit;cursor:pointer}
+.limits{margin-top:16px;display:grid;gap:8px}
+.lim{display:grid;grid-template-columns:1fr 110px 170px;gap:10px;align-items:center;font-size:13px}
+@media(max-width:620px){.lim{grid-template-columns:1fr 90px}.lim b{grid-column:1/-1;text-align:right}}
+.lim .bar{height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.lim .bar i{display:block;height:100%;background:var(--ac)}
+.lim.bad .bar i{background:var(--bad)}
+.lim.bad b{color:var(--bad)}
+.lim.total{border-top:1px solid var(--line);padding-top:8px;font-weight:600}
+
+/* Вердикты */
+.verdict{margin-top:14px;padding:12px 14px;border-radius:var(--r-sm);background:var(--surface-2);font-size:14px;border:1px solid var(--line)}
+.verdict.ok{background:var(--ok-bg);border-color:color-mix(in srgb,var(--ok) 35%,transparent)}
+.verdict.bad{background:var(--bad-bg);border-color:color-mix(in srgb,var(--bad) 35%,transparent)}
+
+/* Итог */
+.result .big{font-size:36px;font-weight:700;letter-spacing:-.02em;margin-top:8px}
+.result .sub{color:var(--mut);font-size:13px;margin-bottom:12px}
+.res-row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.res-row span{color:var(--mut)}
+.res-row b.g{color:var(--ok)}
+.res-row b.n{color:var(--mut)}
+.issues{margin-top:12px;padding:12px;border-radius:var(--r-sm);font-size:13.5px}
+.issues ul{margin:6px 0 0;padding-left:18px}
+.issues.bad{background:var(--bad-bg);color:var(--tx);border:1px solid color-mix(in srgb,var(--bad) 35%,transparent)}
+.issues.warn{background:var(--warn-bg);border:1px solid color-mix(in srgb,var(--warn) 35%,transparent)}
+.issues.good{background:var(--ok-bg);border:1px solid color-mix(in srgb,var(--ok) 35%,transparent)}
+.actions{display:grid;gap:8px;margin-top:16px}
+button.primary{background:var(--ac);color:var(--ac-ink);border:none}
+.actions button,.modal-actions button,.offer button{padding:12px 16px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--surface-2);color:var(--tx);font:inherit;font-weight:600;cursor:pointer}
+.actions button:hover,.offer button:hover{filter:brightness(1.05)}
+
+/* Предложение услуги */
+.offer .price{display:flex;align-items:baseline;gap:8px;margin:10px 0}
+.offer .price b{font-size:26px}
+.offer .price span{color:var(--mut);font-size:13px}
+.offer button{width:100%}
+.fine{font-size:12px;color:var(--mut);margin:10px 0 0}
+.note-card p{font-size:13px;color:var(--mut)}
+
+/* Риски */
+.card.warn{border-color:color-mix(in srgb,var(--warn) 45%,transparent);background:var(--warn-bg)}
+.cases{font-size:14px;padding-left:18px}
+.cases li{margin-bottom:8px}
+.rule{font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px}
+
+.faq-item{border-top:1px solid var(--line);padding:12px 0}
+.faq-item h3{font-size:15px;margin:0 0 4px}
+.faq-item p{margin:0;font-size:14px;color:var(--mut)}
+
+.foot{border-top:1px solid var(--line);padding:22px 0;color:var(--mut);font-size:13px}
+
+/* Модальные окна */
+dialog{border:1px solid var(--line);border-radius:var(--r);padding:0;background:var(--surface);color:var(--tx);max-width:520px;width:92%}
+dialog::backdrop{background:rgba(10,20,35,.55)}
+.modal{padding:20px}
+.modal h3{margin:0 0 6px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mut);margin-top:10px}
+.check input{width:auto}
+.hint.tiny{font-size:12px;margin:4px 0 0}
+/* Платный доступ */
+.offer .what{font-size:13.5px;color:var(--mut);padding-left:18px;margin:0 0 10px}
+.offer .what li{margin-bottom:6px}
+button.locked::after{content:' 🔒';font-size:12px}
+.preview{max-height:230px;overflow:hidden;position:relative;border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:14px;background:var(--surface-2);font-size:13.5px}
+.preview::after{content:'';position:absolute;left:0;right:0;bottom:0;height:90px;
+  background:linear-gradient(transparent,var(--surface-2))}
+.preview h1{font-size:17px;margin:0 0 4px}
+.preview h2{font-size:14px;margin:10px 0 4px}
+.preview table{width:100%;border-collapse:collapse;font-size:12px}
+.preview td,.preview th{border:1px solid var(--line);padding:3px 5px}
+.paywall{margin-top:14px;padding:14px;border:1px solid var(--ac);border-radius:var(--r-sm);background:color-mix(in srgb,var(--ac) 6%,transparent)}
+.paywall button.primary{width:100%;padding:12px;border:none;border-radius:var(--r-sm);font:inherit;font-weight:600;background:var(--ac);color:var(--ac-ink);cursor:pointer}
+.code-row{display:flex;gap:8px}
+.code-row button{padding:11px 16px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface-2);color:var(--tx);font:inherit;cursor:pointer;white-space:nowrap}
+.err{color:var(--bad);font-size:13px;margin:8px 0 0;min-height:1em}
+.q{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);font-size:11px;cursor:help;color:var(--mut)}
+
+.print-only{display:none}
+
+/* Уведомление вместо alert: на телефоне системное окно легко пропустить, а ссылку - нет. */
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:99;max-width:min(560px,92vw);
+  background:var(--surface);border:1px solid var(--ac);border-radius:var(--r-sm);box-shadow:var(--sh);
+  padding:12px 14px;font-size:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.toast a{font-weight:600}
+.toast button{background:none;border:none;color:var(--mut);font-size:18px;cursor:pointer;margin-left:auto}
+
+/* Страница без JavaScript: честно говорим, что калькулятор не посчитает. */
+.noscript{margin:18px;padding:14px;border:1px solid var(--bad);background:var(--bad-bg);border-radius:var(--r-sm)}

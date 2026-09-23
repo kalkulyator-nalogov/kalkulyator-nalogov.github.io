@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Какой налоговый режим выгоднее ИП и самозанятым - калькулятор 2026</title>
+<meta name="description" content="Бесплатный калькулятор налогов для ИП, самозанятых и физлиц: сравнение НПД, УСН «доходы», УСН «доходы минус расходы», патента и ОСН по вашим цифрам за 2026 год.">
+<meta name="keywords" content="налоговый калькулятор, УСН, НПД, самозанятые, патент, ИП, налоги 2026, какой режим выгоднее">
+<link rel="canonical" href="https://kalkulyator-nalogov.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Какой налоговый режим выгоднее в 2026 году - калькулятор для ИП и самозанятых">
+<meta property="og:description" content="Сравните НПД, УСН, патент и ОСН по своим цифрам за 30 секунд. Бесплатно, без регистрации.">
+<meta property="og:url" content="https://kalkulyator-nalogov.github.io/">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="style.css">
+<style>
+  .rko-block{margin-top:26px}
+  .rko-block .card{border-color:color-mix(in srgb,var(--ac) 30%,transparent)}
+  footer.foot a{color:var(--mut);text-decoration:underline}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Налоговый калькулятор для ИП и самозанятых",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "RUB" },
+  "description": "Онлайн-калькулятор сравнивает НПД, УСН «доходы», УСН «доходы минус расходы», патент и ОСН по введённым данным и подсказывает, какой налоговый режим выгоднее в 2026 году."
+}
+</script>
+</head>
+<body>
+<div class="hero">
+  <div class="container">
+    <span class="badge">Обновлено на 2026 год</span>
+    <h1>Какой налоговый режим выгоднее вам в 2026 году</h1>
+    <p class="lead">Введите ожидаемый доход и статус - калькулятор сравнит НПД (самозанятость), УСН «доходы», УСН «доходы минус расходы», патент и ОСН, и покажет, где меньше налоговая нагрузка. Бесплатно, без регистрации, все расчёты - прямо в браузере.</p>
+    <div class="steps">
+      <div class="step"><b>1</b> Укажите статус и доход</div>
+      <div class="step"><b>2</b> Получите сравнение режимов</div>
+      <div class="step"><b>3</b> Откройте счёт под выбранный режим</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+<div class="layout">
+  <div>
+    <form name="calc" class="card" autocomplete="off">
+      <h2>Ваши данные</h2>
+      <p class="hint">Ничего не сохраняется и никуда не отправляется - расчёт идёт локально в вашем браузере.</p>
+
+      <label for="status">Статус</label>
+      <select id="status" name="status">
+        <option value="fiz">Физлицо (ещё не зарегистрирован)</option>
+        <option value="ip" selected>ИП</option>
+        <option value="ur">ООО</option>
+      </select>
+
+      <div class="grid2">
+        <div>
+          <label for="income">Ожидаемый доход в год, ₽</label>
+          <input id="income" name="income" type="text" inputmode="decimal" value="1200000">
+        </div>
+        <div>
+          <label for="expenses">Из них подтверждённые расходы, ₽</label>
+          <input id="expenses" name="expenses" type="text" inputmode="decimal" value="300000">
+        </div>
+      </div>
+
+      <label for="buyerType">Кто в основном платит вам</label>
+      <select id="buyerType" name="buyerType">
+        <option value="fiz">Физлица</option>
+        <option value="ur">Юрлица / ИП</option>
+      </select>
+
+      <div class="grid2">
+        <div class="check"><input id="hasStaff" name="hasStaff" type="checkbox"> <label for="hasStaff" style="margin:0">Есть или планируются сотрудники по найму</label></div>
+        <div id="staffCountRow" style="display:none">
+          <label for="staffCount">Сколько сотрудников</label>
+          <input id="staffCount" name="staffCount" type="text" inputmode="numeric" value="1">
+        </div>
+      </div>
+
+      <div class="check"><input id="resale" name="resale" type="checkbox"> <label for="resale" style="margin:0">Деятельность - перепродажа чужих товаров</label></div>
+      <div class="check"><input id="excludedActivity" name="excludedActivity" type="checkbox"> <label for="excludedActivity" style="margin:0">Розничная торговля или грузоперевозки (влияет на патент и НПД)</label></div>
+
+      <details style="margin-top:14px">
+        <summary style="cursor:pointer;color:var(--ac);font-size:14px">Ставки УСН в моём регионе снижены (нажмите, если знаете точные цифры)</summary>
+        <div class="grid2" style="margin-top:10px">
+          <div>
+            <label for="usnIncomeRate">Ставка УСН «доходы», %</label>
+            <input id="usnIncomeRate" name="usnIncomeRate" type="text" inputmode="decimal" value="6">
+          </div>
+          <div>
+            <label for="usnDrRate">Ставка УСН «доходы минус расходы», %</label>
+            <input id="usnDrRate" name="usnDrRate" type="text" inputmode="decimal" value="15">
+          </div>
+        </div>
+        <p class="hint tiny">По умолчанию стоят базовые федеральные ставки 6% и 15%. Регион может снижать их отдельным законом - точную ставку для своего региона и вида деятельности уточните на nalog.gov.ru или в своей налоговой.</p>
+      </details>
+    </form>
+
+    <div class="card note-card">
+      <h3>Как это посчитано</h3>
+      <p>Методика, ставки, лимиты и источники (с датой проверки) - в файле <a href="METHODOLOGY.md">METHODOLOGY.md</a> репозитория. Калькулятор даёт ориентир, а не готовое решение: перед регистрацией сверьтесь с действующим законодательством вашего региона или проконсультируйтесь с бухгалтером/юристом.</p>
+    </div>
+  </div>
+
+  <div>
+    <div id="bestBox"></div>
+    <div id="warnings"></div>
+    <div id="results"></div>
+
+    <div class="rko-block">
+      <div class="card">
+        <h3>Нужен счёт для бизнеса</h3>
+        <p class="hint">Если решите открыть ИП или ООО и понадобится расчётный счёт - можно посмотреть предложения банков. Ссылка ведёт на внешний сервис, решение и все данные - там, мы их не собираем.</p>
+        <a id="rkoLink" class="offer" href="https://rko-group.ru/" target="_blank" rel="noopener nofollow sponsored">
+          <button type="button">Посмотреть варианты расчётного счёта →</button>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<footer class="foot">
+  <div class="container">
+    Калькулятор не является налоговой консультацией и не заменяет проверку в вашей налоговой инспекции. Методика и источники - <a href="METHODOLOGY.md">METHODOLOGY.md</a>.
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
