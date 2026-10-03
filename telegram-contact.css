@@ -1,0 +1,13 @@
+/* Только оформление блока первого сообщения в Telegram. */
+.tg-first-message{box-sizing:border-box;max-width:1000px;margin:24px auto;padding:20px;background:var(--card,#fff);color:var(--ink,var(--tx,#172033));border:1px solid var(--line,#d9e1ed);border-radius:16px;font:inherit;text-align:left}
+.tg-first-message h2{font-size:21px;line-height:1.3;margin:0 0 8px;color:inherit}
+.tg-first-message p{font-size:14px;line-height:1.6;margin:8px 0;color:inherit}
+.tg-first-message .tg-button{display:inline-block;padding:12px 18px;min-height:44px;border-radius:12px;background:#1647a5;color:#fff;font-size:15px;font-weight:700;text-decoration:none;margin:8px 0}
+.tg-first-message summary{font-size:14px;cursor:pointer;padding:10px 0;color:inherit;font-weight:600}
+.tg-first-message pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.6 system-ui,sans-serif;padding:14px;border:1px solid var(--line,#d9e1ed);border-radius:10px;background:var(--field,var(--bg2,#f7f9fc));color:inherit}
+.tg-first-message button{font:inherit;font-size:14px;min-height:44px;padding:10px 14px;border:1px solid var(--line,#d9e1ed);border-radius:10px;background:var(--field,var(--bg2,#f7f9fc));color:inherit;cursor:pointer}
+.tg-first-message :focus-visible{outline:3px solid #1682aa;outline-offset:3px}
+.tg-first-message [hidden]{display:none!important}
+.tg-first-message .tg-copy-status{display:block;min-height:1.5em;font-size:13px;margin-top:8px}
+@media(max-width:650px){.tg-first-message{margin:20px 12px;padding:18px}.tg-first-message .tg-button{display:block;text-align:center}}
+@media(prefers-color-scheme:dark){.tg-first-message{background:var(--card,#161d2b);color:var(--ink,var(--tx,#edf0f5));border-color:var(--line,#334055)}.tg-first-message pre,.tg-first-message button{background:var(--field,var(--bg2,#111827));border-color:var(--line,#334055)}}
